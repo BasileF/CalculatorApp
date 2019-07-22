@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Application 1.0</string>
+    <string name="inc">Increment</string>
+    <string name="curVal">0</string>
+</resources>
