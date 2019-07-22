@@ -1,7 +1,7 @@
 package com.example.application10;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
     private Double operand1 = null;
     private String newOp = "=";
 
+    private final String STATE_NEW_OP = "newOp";
+    private final String STATE_OPERAND1 = "operand1";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         result = findViewById(R.id.res);
         number = findViewById(R.id.num);
         operation = findViewById(R.id.textView2);
+        operation.setText(newOp);
 
         //Initialize operand buttons
         Button button0 = findViewById(R.id.button);
@@ -90,6 +94,41 @@ public class MainActivity extends AppCompatActivity {
         add.setOnClickListener(opListener);
         subtract.setOnClickListener(opListener);
 
+        Button neg = findViewById(R.id.buttonClear);
+
+        View.OnClickListener negListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String num = number.getText().toString();
+                if(num.length()==0) number.setText("-");
+                else {
+                    try {
+                        Double val = Double.valueOf(num);
+                        val *= -1;
+                        number.setText(val.toString());
+                    } catch(NumberFormatException e){
+                        number.setText("");
+                    }
+                }
+            }
+        };
+
+        neg.setOnClickListener(negListener);
+
+        Button clr = findViewById(R.id.buttonClear);
+
+        View.OnClickListener clrListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                operand1 = null;
+                newOp = "=";
+                result.setText("");
+                number.setText("");
+                operation.setText(newOp);
+            }
+        };
+
+        clr.setOnClickListener(clrListener);
     }
 
     private void performOp(Double num, String op) {
@@ -118,5 +157,20 @@ public class MainActivity extends AppCompatActivity {
 
         result.setText(operand1.toString());
         number.setText("");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        newOp = savedInstanceState.getString(STATE_NEW_OP);
+        operand1 = savedInstanceState.getDouble(STATE_OPERAND1);
+        operation.setText(newOp);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_NEW_OP, newOp);
+        if(operand1 != null) outState.putDouble(STATE_OPERAND1, operand1);
+        super.onSaveInstanceState(outState);
     }
 }
